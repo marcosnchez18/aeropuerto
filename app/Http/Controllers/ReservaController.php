@@ -41,14 +41,30 @@ class ReservaController extends Controller
             'vuelo_id' => 'required|exists:vuelos,id',
         ]);
 
-        $reserva = new Reserva();
-        $reserva->user_id = Auth::id(); // Utiliza Auth::id() para obtener el ID del usuario actual
-        $reserva->vuelo_id = $validated['vuelo_id'];
-        $reserva->save();
+        // Vamos a buscar el buelo cuyo id sea el del validate que hemos hecho
+        $vuelo = Vuelo::findOrFail($validated['vuelo_id']);
 
-        session()->flash('success', 'La reserva se ha creado correctamente.');
-        return redirect()->route('reservas.index');
+        // miramos a ver si hay plazas
+        if ($vuelo->plazas > 0) {
+            // asi se resta 1 en laravel
+            $vuelo->plazas--;
+            $vuelo->save();
+
+            // en caso de que haya plaza po creamos una reserva
+            $reserva = new Reserva();
+            $reserva->user_id = Auth::id(); // cojemos el id del usuario actual
+            $reserva->vuelo_id = $validated['vuelo_id'];
+            $reserva->save();
+
+            session()->flash('success', 'La reserva se ha creado correctamente.');
+            return redirect()->route('reservas.index');
+        } else {
+
+            session()->flash('error', 'No hay plazas disponibles para este vuelo.');
+            return redirect()->back();
+        }
     }
+
 
 
     /**
@@ -80,19 +96,51 @@ class ReservaController extends Controller
             'vuelo_id' => 'required|exists:vuelos,id',
         ]);
 
-        $reserva->vuelo_id = $validated['vuelo_id'];
-        $reserva->save();
-        session()->flash('success', 'Reserva cambiada correctamente');
+
+        $vuelo_seleccionado = Vuelo::findOrFail($validated['vuelo_id']);
+
+        // miramos si el vuelo es diferente al vuelo que haya cogido el usuario
+        if ($vuelo_seleccionado->id !== $reserva->vuelo_id) {
+
+            if ($vuelo_seleccionado->plazas > 0) {
+
+                $vuelo_seleccionado->plazas--;
+                $vuelo_seleccionado->save();
+
+                // si el vuelo es diferente al de antes po le sumamos 1
+                $vueloActual = Vuelo::findOrFail($reserva->vuelo_id);
+                $vueloActual->plazas++;
+                $vueloActual->save();
+
+                // actualizamos la reserva
+                $reserva->vuelo_id = $validated['vuelo_id'];
+                $reserva->save();
+
+                session()->flash('success', 'Reserva cambiada correctamente');
+            } else {
+                session()->flash('error', 'No hay plazas disponibles para el nuevo vuelo.');
+            }
+        } else {
+            session()->flash('warning', 'Ya tiene seleccionado este vuelo.');
+        }
+
         return redirect()->route('reservas.index');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Reserva $reserva)
     {
+        // cojemos el vuelo actual que vamos a borrar y le sumamos 1 a la cantidad
+        $vuelo = $reserva->vuelo;
+        $vuelo->plazas += 1;
+        $vuelo->save();
+
         $reserva->delete();
-        session()->flash('success', 'La reserva se ha eliminado correctamente.');
+
+        session()->flash('success', 'La reserva se ha eliminado correctamente y se ha aumentado en 1 la cantidad de plazas disponibles.');
         return redirect()->route('reservas.index');
     }
 }
