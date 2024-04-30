@@ -18,4 +18,6 @@ class Vuelo extends Model
     {
         return $this->belongsTo(Aeropuerto::class, 'destino_id');
     }
+
+    
 }
