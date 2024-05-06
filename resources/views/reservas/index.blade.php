@@ -33,8 +33,10 @@
                 @foreach ($reservas as $reserva)
                     <tr class="bg-white border-b">
 
-                        <th class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                            {{ $reserva->id }}
+                        <th  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                            <a href="{{ route('reservas.show', ['reserva' => $reserva]) }}" class="text-blue-500">
+                                {{ $reserva->id }}
+                            </a>
                         </th>
                         <th class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                             {{ $reserva->user->email }}
@@ -72,6 +74,55 @@
         </table>
         <form action="{{ route('reservas.create') }}" class="flex justify-center mt-4 mb-4">
             <x-primary-button class="bg-green-500">Hacer una reserva</x-primary-button>
-        </form>
+        </form> <br><br><br><br><br>
+
+
+
+
+
+
+
+
+
+        <div class="mt-4">
+            <x-input-label for="vuelo_id" :value="''" />
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3">
+                            Vuelos disponibles
+                        </th>
+                        <th class="px-6 py-3">
+                            Plazas disponibles
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach ($vuelos as $vuelo)
+                    @if ($vuelo->plazas > 0)
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">
+                                Vuelo {{ $vuelo->origen->nombre }} - {{ $vuelo->destino->nombre }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">
+                                {{ $vuelo->plazas }}
+                            </div>
+                        </td>
+                    </tr>
+                    @endif
+                    @endforeach
+                </tbody>
+            </table>
+            <x-input-error :messages="$errors->get('vuelo_id')" class="mt-2" />
+        </div>
+
+
+
+
+
+
     </div>
 </x-app-layout>

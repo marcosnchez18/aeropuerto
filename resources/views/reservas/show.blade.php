@@ -4,13 +4,10 @@
             <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                 <tr>
                     <th class="px-6 py-3">
-                        Marca
+                        Usuario
                     </th>
                     <th class="px-6 py-3">
-                        Modelo
-                    </th>
-                    <th class="px-6 py-3">
-                        Nombre Aula
+                        Código de reserva
                     </th>
                     <th class="px-6 py-3">
                         Origen
@@ -19,41 +16,39 @@
                         Destino
                     </th>
                     <th class="px-6 py-3">
-                        Fecha cambio
+                        Compañía
                     </th>
                     <th class="px-6 py-3">
-                        Dispositivos que contiene
+                        Precio
                     </th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="bg-white border-b">
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {{ $ordenador->marca }}
+                        {{ $reserva->user->email }}
                     </td>
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {{ $ordenador->modelo }}
+                        {{ $reserva->id }}
                     </td>
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {{ $ordenador->aula->nombre }}
+                        {{ $reserva->vuelo->origen->nombre }}
                     </td>
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {!! $ordenador->comprueba_origen() !!}
+                        {{$reserva->vuelo->destino->nombre}}
                     </td>
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {!! $ordenador->comprueba_destino() !!}
+                        {{$reserva->vuelo->compania->nombre}}
                     </td>
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {!! $ordenador->fecha_cambio() !!}
+                        {{$reserva->vuelo->precio}}
                     </td>
-                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {{ $ordenador->dispositivos_contenidos() }}
-                    </td>
+
                 </tr>
             </tbody>
         </table>
         <div class="flex items-center justify-end mt-4">
-            <a href="{{ route('ordenadores.index') }}">
+            <a href="{{ route('reservas.index') }}">
                 <x-secondary-button class="ms-4">
                     Volver
                     </x-primary-button>

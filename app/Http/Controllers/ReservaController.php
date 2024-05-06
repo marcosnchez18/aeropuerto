@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Compania;
 use App\Models\Reserva;
 use App\Models\User;
 use App\Models\Vuelo;
@@ -18,6 +19,7 @@ class ReservaController extends Controller
         $reservas = Auth::user()->reservas;
         return view('reservas.index', [
             'reservas' => $reservas,
+            'vuelos' => Vuelo::all(),
         ]);
     }
 
@@ -74,6 +76,8 @@ class ReservaController extends Controller
     {
         return view('reservas.show', [
             'reserva' => $reserva,
+            'vuelos' => Vuelo::all(),
+            'companias' => Compania::all(),
         ]);
     }
     /**
